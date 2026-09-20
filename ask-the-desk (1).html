@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ask the Desk — Epicenter Front Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FBF9F6;
+    --bg-raised: #F3EEE6;
+    --crimson: #B8001F;
+    --crimson-tint: #FBEAEA;
+    --ink: #201D1A;
+    --ink-soft: #55504A;
+    --border: #E4DDD1;
+    --focus: #1E6FD9;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1A1815;
+      --bg-raised: #24211C;
+      --crimson: #E23B4F;
+      --crimson-tint: #3A1A1D;
+      --ink: #F2EEE7;
+      --ink-soft: #B8B0A4;
+      --border: #3A352C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1A1815;
+    --bg-raised: #24211C;
+    --crimson: #E23B4F;
+    --crimson-tint: #3A1A1D;
+    --ink: #F2EEE7;
+    --ink-soft: #B8B0A4;
+    --border: #3A352C;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    min-height: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+  header.top {
+    margin-bottom: 28px;
+  }
+  .bell { font-size: 28px; line-height: 1; display: block; margin-bottom: 10px; }
+  h1 {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-weight: 600;
+    font-size: 34px;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    line-height: 1.5;
+    max-width: 52ch;
+    margin: 0;
+  }
+  .search-row {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    background: var(--bg);
+    padding: 18px 0 12px;
+    z-index: 5;
+  }
+  .search-box {
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 16px;
+    padding: 13px 16px 13px 42px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-raised);
+    color: var(--ink);
+    outline: none;
+  }
+  .search-box input:focus-visible {
+    border-color: var(--focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent);
+  }
+  .search-box svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .pill {
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-raised);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .pill:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .pill.active {
+    background: var(--crimson);
+    border-color: var(--crimson);
+    color: #fff;
+  }
+  .category-block { margin-top: 34px; }
+  .category-title {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--crimson);
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .entry {
+    border-bottom: 1px solid var(--border);
+  }
+  .entry:last-child { border-bottom: none; }
+  .entry button.q {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-family: inherit;
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 28px 14px 0;
+    cursor: pointer;
+    position: relative;
+    line-height: 1.4;
+  }
+  .entry button.q:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+  .entry button.q::after {
+    content: "+";
+    position: absolute;
+    right: 2px;
+    top: 12px;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--crimson);
+    transition: transform 0.15s ease;
+  }
+  .entry.open button.q::after {
+    transform: rotate(45deg);
+  }
+  .entry .a {
+    display: none;
+    padding: 0 0 18px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 62ch;
+  }
+  .entry.open .a { display: block; }
+  .no-results {
+    display: none;
+    padding: 40px 0;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+  footer.note {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="bell">🛎️</span>
+    <h1>Ask the Desk</h1>
+    <p class="subtitle">Quick answers for real shift situations. Search, or browse by category — check here before you call.</p>
+  </header>
+
+  <div class="search-row">
+    <div class="search-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search" type="text" placeholder="Search a question or keyword…" autocomplete="off">
+    </div>
+    <div class="pills" id="pills"></div>
+  </div>
+
+  <div id="results"></div>
+  <p class="no-results" id="noResults">No matches yet — try a different word, or flag it so we can add it.</p>
+
+  <footer class="note">
+    This is a living document — v1. If your question isn't here, that's useful information: it means the answer needs to be added, not that you did something wrong by asking. Flag anything missing to your supervisor so it gets built in.
+  </footer>
+</div>
+
+<script>
+const data = [
+  { cat: "Keys & Access", q: "A resident locked their key in their room — what do I do?", a: "Ask for their UID and look them up by last name, room number, or UID. Confirm their account, then check out the correct floor's loaner key from the EPI Key Cabinet in StarRez. Verify the key code on the back matches before handing it over. They get 30 minutes — after that it's a $10 late fee, and a $125 lock-change charge if it's never returned." },
+  { cat: "Keys & Access", q: "How do I run the Key Audit?", a: "Cross-check StarRez, the Excel sheet, the Temp Card binders, and the physical key cabinet — they all need to match. Update name/date, note changes in Excel, flag any new red tags in the Hospitality Team chat, and log anything unusual in the Shift Communication Log. AM audit happens right after passing off with Security; PM audit is at 10:30 PM before close." },
+  { cat: "Keys & Access", q: "The key cabinet and StarRez don't match — what now?", a: "Always confirm the key code first — that resolves most \"discrepancies.\" If it's still off, escalate immediately via the Shift Communication Log, Teams, or a message to Keys & Access. Don't sit on it." },
+  { cat: "Keys & Access", q: "A resident's U Card isn't working for a door, elevator, or bike storage.", a: "Go to utah.atriumcampus.com and SSO login with your CIS credentials. Under \"People,\" look up their UID, go to the Access tab, click the plus sign, and select the access matching where they live (e.g., room 2143 → \"HRE EPICENTER 2ND FLOOR\"). Confirm the area against StarRez before granting." },
+
+  { cat: "Mail & Packages", q: "A resident says they have mail to pick up.", a: "Look them up in StarRez (UID, room #, or name) and always check their UID before handing anything over — that confirms it's actually theirs. If nothing shows on their account, ask to see their pickup email or locker text/barcode. Issue from the Parcel window, or Entry Actions → Parcel Issue, select the parcel(s), and confirm." },
+  { cat: "Mail & Packages", q: "How do I load the Parcel Lockers?", a: "Click the Parcel Pending icon, enter the access code, select Load Parcel, scan the tracking barcode, look up the resident by last name, select the box size, and load it in. Confirm the load and move to the next package. Never leave mail sitting in the back office if lockers are open." },
+  { cat: "Mail & Packages", q: "What's the labeling format for packages?", a: "EPMM-DD-E000 for envelopes, S000 for small boxes, L000 for large, OV00 for oversize, and PM for paper mail. MM is month, DD is day." },
+  { cat: "Mail & Packages", q: "A package is expired in the lockers.", a: "Remove it, note \"EXPIRED FROM PARCEL LOCKERS\" on the parcel and in the StarRez notes, then text the resident using the Expired from Lockers template and move it into the Mail Room." },
+  { cat: "Mail & Packages", q: "A perishable package comes in.", a: "Text and call the resident immediately so they know to grab it. If it's still unclaimed after 24 hours, it gets disposed of." },
+  { cat: "Mail & Packages", q: "How do I update the Parcel Pending Address Book?", a: "Pull the Epicenter Address Book report in StarRez (Shared Reports → Desk and Mailroom → Epicenter), export as CSV, remove anyone not marked \"In Room,\" and format it as Information, First, Last, Email, Phone, Comfort Zone. Import it in the Parcel Pending portal under Manage Address Books — use \"Overwrite\" only if you actually mean to wipe existing contacts, otherwise use \"Update existing.\"" },
+
+  { cat: "Resources", q: "A resident wants to check out a resource (vacuum, board game, etc.)", a: "Check their UID to verify identity — always. In StarRez, go to their profile → Entry Activities → Issue Resource. Filter by Resource Type if that's faster, check the box next to the item, and click OK." },
+  { cat: "Resources", q: "How does the daily Resource Closet Audit work?", a: "Cross-check the \"Checked-out Resources\" list in StarRez against what's physically out. Return anything that's back but still marked checked-out, and note anything missing but not marked checked-out. Confirm the closet is tidy, vacuums are emptied, cords stowed, and rec equipment (billiards, shuffleboard, foosball) has all its parts." },
+
+  { cat: "Reservations", q: "How do I book a study or training room?", a: "General Files → Room Reservations folder → Room Reservations Excel sheet. Fill out the first tab, and check the tab for that specific room so you don't double-book. Don't edit the other tabs." },
+
+  { cat: "Escalation & Incidents", q: "Who do I call — CA or Facilities?", a: "Person-facing situation (altercation, safety concern, someone in distress) → Community Advisor. Maintenance or facility issue → Facilities via Teams or the QR code. When genuinely in doubt, treat it as CA-worthy — it's always better to have someone respond than not." },
+  { cat: "Escalation & Incidents", q: "The CA isn't answering — what now?", a: "Go to Area Duty — that's the next point of contact when CA/HA doesn't pick up. Reserve it for things a student genuinely can't resolve alone." },
+  { cat: "Escalation & Incidents", q: "When do I file an Incident Report?", a: "Any altercation, injury, medical emergency, theft, vandalism, policy violation, lost/stolen keys or ID, or anything involving police — file a report every time. Timeliness matters more than polish." },
+  { cat: "Escalation & Incidents", q: "How do I actually file one?", a: "Behavioral incidents (yelling, vandalism, substance issues) go through the HDP Advocate system. Discrimination, targeted actions, sexual assault, or disability access go through OEO. Both send a confirmation email with a report number — share that number with the team." },
+  { cat: "Escalation & Incidents", q: "What information do I need before I escalate a call?", a: "Student's full name, building name, exact location (room #), a general explanation of the situation, and where emergency services can meet them." },
+
+  { cat: "FERPA & Privacy", q: "A parent calls asking about their student's room, grades, or schedule.", a: "Don't share it. FERPA means student info doesn't go to parents, guests, or anyone else without written consent — and a FERPA PIN isn't accepted as authorization at the desk. When in doubt, don't share." },
+
+  { cat: "Building & Safety", q: "The fire panel is beeping — what do the lights mean?", a: "Green: normal, no action. Red: evacuate, call 911, contact Area Duty. Yellow: system needs service — email fire@fm.utah.edu with the panel message verbatim. Orange: contact Area Duty and try to identify the source if it's safe to do so. You can press Acknowledge to silence it, but never reset the panel unless directed by fire personnel." },
+  { cat: "Building & Safety", q: "The fire alarm is actually going off.", a: "Call Area Duty, grab the Front Desk master key, lock down the Mail Room and desktops, and exit to the designated meeting spot. Don't re-enter until it's cleared. Document what time it went off, when emergency services responded, and when the building was cleared to re-enter." },
+
+  { cat: "Desk Standards", q: "How should I answer the phone?", a: "Within 3 rings when possible: \"Good Morning/Afternoon/Evening, thank you for calling the Epicenter Front Desk, how can I help you?\" Take a full message if someone's unavailable and relay it via Teams or email." },
+  { cat: "Desk Standards", q: "What's actually OK to do at the desk when it's quiet?", a: "Light phone use, one earbud while working mail, homework or reading are fine. Not OK, ever: both earbuds in, loud media, ignoring people who approach, gaming or social scrolling, or friends lingering at the desk." },
+  { cat: "Desk Standards", q: "When are building walkthroughs?", a: "Opener: 7 AM and 12 PM. Mid: 12 PM and 4 PM. Closer: 7 PM and 10:30 PM. Only message Custodial if something needs immediate attention — routine trash doesn't need a report." },
+];
+
+const categories = [...new Set(data.map(d => d.cat))];
+const pillsEl = document.getElementById('pills');
+const resultsEl = document.getElementById('results');
+const searchEl = document.getElementById('search');
+const noResultsEl = document.getElementById('noResults');
+let activeCat = "All";
+
+function makePills() {
+  const all = ["All", ...categories];
+  pillsEl.innerHTML = all.map(c =>
+    `<button class="pill${c === activeCat ? ' active' : ''}" data-cat="${c}">${c}</button>`
+  ).join('');
+  pillsEl.querySelectorAll('.pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeCat = btn.dataset.cat;
+      makePills();
+      render();
+    });
+  });
+}
+
+function render() {
+  const term = searchEl.value.trim().toLowerCase();
+  const matches = data.filter(d => {
+    const catOk = activeCat === "All" || d.cat === activeCat;
+    const textOk = !term || d.q.toLowerCase().includes(term) || d.a.toLowerCase().includes(term);
+    return catOk && textOk;
+  });
+
+  if (matches.length === 0) {
+    resultsEl.innerHTML = "";
+    noResultsEl.style.display = "block";
+    return;
+  }
+  noResultsEl.style.display = "none";
+
+  const grouped = {};
+  matches.forEach(d => {
+    if (!grouped[d.cat]) grouped[d.cat] = [];
+    grouped[d.cat].push(d);
+  });
+
+  const catOrder = activeCat === "All" ? categories : [activeCat];
+  let html = "";
+  catOrder.forEach(cat => {
+    if (!grouped[cat]) return;
+    html += `<div class="category-block"><div class="category-title">${cat}</div>`;
+    grouped[cat].forEach((d, i) => {
+      const openClass = term ? " open" : "";
+      html += `
+        <div class="entry${openClass}">
+          <button class="q" type="button">${d.q}</button>
+          <div class="a">${d.a}</div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+  resultsEl.innerHTML = html;
+
+  resultsEl.querySelectorAll('.entry .q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.entry').classList.toggle('open');
+    });
+  });
+}
+
+searchEl.addEventListener('input', render);
+makePills();
+render();
+</script>
+</body>
+</html>
